@@ -7,7 +7,7 @@
 //  while (q != p)  alloc.destory(--q); // 释放真正构造的string 
 //  alloc.deallocator(p,n);
 
-
+#include <iostream>
 #include "allocator.h"
 
 int main(){

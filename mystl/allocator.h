@@ -13,9 +13,9 @@ construct(p,Args)
 destroy(p)
 destroy(p,n)
 
-
-
 */
+
+
 // 避免重复导入头文件
 #ifndef MTSTL_ALLOCATOR_H
 #define MTSTL_ALLOCATOR_H
