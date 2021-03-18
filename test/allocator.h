@@ -105,5 +105,6 @@ void allocator<T>::destroy(T* ptr){
 
 
 
-}// **mystl**
+}/* namespace mystl */
+
 #endif // MTSTL_ALLOCATOR_H

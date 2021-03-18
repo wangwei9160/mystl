@@ -10,6 +10,6 @@
 namespace mystl
 {
     
-}
+}/* namespace mystl */
 
 #endif /* MYSTL_CONSTRUCT_H */
