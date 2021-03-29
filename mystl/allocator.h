@@ -20,6 +20,8 @@ destroy(p,n)
 #ifndef MTSTL_ALLOCATOR_H
 #define MTSTL_ALLOCATOR_H
 
+#include "construct.h"
+
 namespace mystl{
 
 template<class T> 
@@ -45,8 +47,8 @@ class allocator
         static T* allocate();//默认生成一个
         static T* allocate(size_type n);//生成多个,n>=0,特判0的情况
 
-        static void dellocate(T* ptr);//默认释放一个
-        static void dellocate(T* ptr , size_type n);//释放多个,n>=0,特判0的情况
+        static void deallocate(T* ptr);//默认释放一个
+        static void deallocate(T* ptr , size_type n);//释放多个,n>=0,特判0的情况
 
         static void construct(T* ptr);//构造一个默认为空的
         static void construct(T* ptr , const T& value);//创建一个对象，方式是调用T的有参构造函数，参数为传过来的值
@@ -56,6 +58,7 @@ class allocator
 
         static void destroy(T* ptr);//对p所指的对象进行析构函数
         static void destroy(T* ptr , size_type n );
+        static void destroy(T* first , T* last);
     
 };
 
@@ -71,23 +74,30 @@ T* allocator<T>::allocate(size_type n){
 }
 
 template<class T>
-void allocator<T>::dellocate(T* ptr){
+void allocator<T>::deallocate(T* ptr){
     if ( ptr == nullptr )
         return ;
     ::operator delete(ptr);
 }
 
 template <class T>
+void allocator<T>::deallocate(T* ptr , size_type n){
+    if(ptr == nullptr) return ;
+    ::operator delete(ptr);
+}
+
+
+template <class T>
 void allocator<T>::construct(T* ptr){
-    // construct.h 中写模块
+    mystl::construct(ptr);
 }
 template <class T>
 void allocator<T>::construct(T* ptr , const T& value){
-    // construct.h 中写模块
+    mystl::construct(ptr,value);
 }
 template <class T>
 void allocator<T>::construct(T* ptr , T&& value){
-    // construct.h 中写模块
+    // mystl::construct(ptr , mystl::move(value));
 }
 template <class T>
 template <class ...Args>
@@ -97,9 +107,13 @@ void allocator<T>::construct(T* ptr, Args&& ...args){
 
 template<class T>
 void allocator<T>::destroy(T* ptr){
-    // construct.h 中写模块
+    mystl::destroy(ptr);
 }
 
+template<class T>
+void allocator<T>::destroy(T* first , T* last){
+    mystl::destroy(first , last);
+}
 
 
 

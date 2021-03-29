@@ -3,13 +3,15 @@
 
 #include <initializer_list>
 
+#include "memory.h"
+#include "algorithm.h"
 
 namespace mystl{
 
 template < class T >
 class vector{
 public:
-    typedef mystl::allocator<T> data_allocator;
+    typedef mystl::allocator<T>  data_allocator;
 
     // vector 的嵌套型别定义
     typedef T value_type;
@@ -48,7 +50,7 @@ public:
     :_begin(rhs._begin),_end(rhs._end),_capacity(rhs._capacity){
         rhs._begin = nullptr;
         rhs._end = nullptr;
-        rhs._end = nullptr
+        rhs._end = nullptr;
     }
 
     //列表初始化容器 vector<T> vec({1,2,3,4,5}) 
@@ -63,15 +65,15 @@ public:
         return *this;
     }
     ~vector(){
-        destory(_begin , _end);
+        destroy_recover(_begin , _end , _capacity - _begin);
         _begin = _end = _capacity = nullptr;
     }
 
     // 迭代器
     iterator begin() noexcept {return _begin;}
-    const_iterator begin() cosnt noexcept {return _begin;}
+    const_iterator begin() const noexcept {return _begin;}
     iterator end() {return _end;}
-    const_iterator end() cosnt noexcept {return _end;}
+    const_iterator end() const noexcept {return _end;}
     const_iterator cbegin() const noexcept {return begin();}
     const_iterator cend() const noexcept {return end();}
     // rbegin、rend 反向迭代器
@@ -110,7 +112,7 @@ public:
         // n < size()
         return (*this)[n];
     }
-    const_reference at(suze_type n ) const {
+    const_reference at(size_type n ) const {
         // n < size()
         return (*this)[n];
     }
@@ -165,7 +167,7 @@ public:
     }
     iterator insert(const_iterator pos , size_type n , const value_type& value){
         // begin() <= pos <= end() 
-        return fill_insert(const_cast<iterator> pos , n , value);
+        return fill_insert(const_cast<iterator>(pos), n , value);
     }
     template<class Iter>
     void insert(const_iterator pos,Iter first,Iter last){
@@ -186,6 +188,8 @@ private:
     void fill_initialize(size_type n , const value_type& value);
     template<class Iter>
     void range_init(Iter first , Iter last);
+
+    void destroy_recover(iterator first , iterator last , size_type n);
 
 
 };
@@ -212,18 +216,23 @@ void vector<T>::init_space(size_type size , size_type cap){
 
 template<class T>
 void vector<T>::fill_initialize(size_type n , const value_type& value){
-    const size_type init_cap = std::max(static_cast<size_type>(16) , n );
+    const size_type init_cap = mystl::max(static_cast<size_type>(16) , n );
     init_space(n , n);
 }
 
 template<class T>
 template<class Iter>
 void vector<T>::range_init(Iter first , Iter last){
-    const size_type init_size = std::max(static_cast<size_type>(last-first) , static_cast<size_type>(16));
+    const size_type init_size = mystl::max(static_cast<size_type>(last-first) , static_cast<size_type>(16));
     init_space(static_cast<size_type>(last-first) , init_size);
     // copy
 }
 
+template<class T>
+void vector<T>::destroy_recover(iterator first , iterator last , size_type n){
+    data_allocator::destroy(first , last);
+    data_allocator::deallocate(first,n);
+}
 
 template<class T>
 void vector<T>::reserve(size_type n){
@@ -243,7 +252,7 @@ void vector<T>::resize(size_type n , const value_type& value){
     if(n < size()){
         erase(begin() + n , end());
     }else {
-        fill_insert(end() , n - size() , value );
+        fill_insert( end() , n - size() , value );
     }
 }
 
