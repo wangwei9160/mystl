@@ -1,6 +1,16 @@
-// 主要包括：对已分配的内存进行调用构造函数和析构函数操作
-// construct : 负责对象的构造
-// destroy   : 负责对象的析构
+/*
+主要包括：对已分配的内存进行调用构造函数和析构函数操作
+construct : 负责对象的构造
+destroy   : 负责对象的析构
+
+construct()接受一个指针ptr和一个初值value，该函数的用途就是将初值设定到指针所指的空间上。
+destroy()有两个版本：
+第一个版本接受一个指针，准备将该指针指向的对象析构掉。直接掉用该对象的析构函数。
+第二个版本接受first和last两个迭代器，准备讲[first，last)范围内的所有对象析构掉。
+
+*/
+
+
 
 #ifndef MYSTL_CONSTRUCT_H
 #define MYSTL_CONSTRUCT_H
@@ -31,7 +41,7 @@ namespace mystl
     template<class T>
     void destroy_one(T* ptr , std::false_type){
         if(ptr != nullptr){
-            ptr -> ~T();
+            ptr->~T();
         }
     }
 

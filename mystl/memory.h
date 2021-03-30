@@ -4,5 +4,6 @@
 #include <cstddef>
 
 #include "allocator.h"
+#include "construct.h"
 
 #endif /*MYYSTL_MEMORY_H*/
